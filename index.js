@@ -52,6 +52,8 @@ function getData() {
 
 	data.longitude += Math.random() * 0.002 - 0.001;
 	data.latitude += Math.random() * 0.002 - 0.001;
+	data.longitude = data.longitude.toFixed(6);
+	data.latitude = data.latitude.toFixed(6);
 
 	return data;
 }
