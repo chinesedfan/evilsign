@@ -40,15 +40,17 @@ function decode(str){
 }
 
 function getData() {
+	var exp = new Date();
 	var data = {
 		longitude: parseFloat(lngInput.val()),
 		latitude: parseFloat(latInput.val()),
 		uuid: tokenInput.val()
 	};
 
-	document.cookie = 'evillng=' + data.longitude;
-	document.cookie = 'evillat=' + data.latitude;
-	document.cookie = 'eviltoken=' + data.uuid;
+	exp.setTime(exp.getTime() + 365*24*60*60*1000);
+	document.cookie = 'evillng=' + data.longitude + ';expires=' + exp.toGMTString();
+	document.cookie = 'evillat=' + data.latitude + ';expires=' + exp.toGMTString();
+	document.cookie = 'eviltoken=' + data.uuid + ';expires=' + exp.toGMTString();
 
 	data.longitude += Math.random() * 0.002 - 0.001;
 	data.latitude += Math.random() * 0.002 - 0.001;
