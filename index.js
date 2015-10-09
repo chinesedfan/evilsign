@@ -7,7 +7,14 @@ var MAGIC_WORD = '';
 
 $(function() {
 	loadCookies();
-	$('.J_sign-button').on('click', sendEvilSign);
+
+	outputArea.on('load', function(e) {
+		enableButton();
+	});
+	$('.J_sign-button').on('click', function(e) {
+		disableButton();
+		sendEvilSign();
+	});
 });
 
 function loadCookies() {
@@ -37,6 +44,13 @@ function decode(str){
 		res.push(String.fromCharCode(parseInt(arr[i], 16)));
 	}
 	return res.join('');
+}
+
+function enableButton() {
+	signButton.removeClass('sending').text('Sign');	
+}
+function disableButton() {
+	signButton.addClass('sending').text('Sending...');	
 }
 
 function getData() {

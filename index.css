@@ -31,10 +31,15 @@ input {
 
 .sign-button {
 	margin-bottom: 20px;
+	color: white;
 	background-color: #f63;
 	text-align: center;
 	line-height: 40px;
 	border-radius: 5px;
+	-webkit-tap-highlight-color: rgba(255, 102, 51, 0.4);
+}
+.sign-button.sending {
+	opacity: 0.4;
 }
 .output-section {
 	width: 100%;
