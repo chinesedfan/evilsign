@@ -3,10 +3,17 @@ var lngInput = $('.lng-input'), latInput = $('.lat-input'),
 var signButton = $('.sign-button');
 var outputArea = $('.output-section');
 
+var KEY_LNG = 'evillng',
+	KEY_LAT = 'evillat',
+	KEY_TOKEN = 'eviltoken';
 var MAGIC_WORD = '';
 
 $(function() {
-	loadCookies();
+	if (window.localStorage) {
+		loadLocalStorage();
+	} else {
+		loadCookies();
+	}
 
 	outputArea.on('load', function(e) {
 		enableButton();
@@ -26,9 +33,33 @@ function loadCookies() {
         result[name] = value;
     });
 
-    lngInput.val(result['evillng'] || '');
-    latInput.val(result['evillat'] || '');
-    tokenInput.val(result['eviltoken'] || '');
+    loadData(result);
+}
+function loadLocalStorage() {
+	loadData(window.localStorage);
+}
+function loadData(data) {
+	lngInput.val(data[KEY_LNG] || '');
+    latInput.val(data[KEY_LAT] || '');
+    tokenInput.val(data[KEY_TOKEN] || '');
+}
+
+function saveCookies(lng, lat, token) {
+	var exp = new Date(), expStr;
+	exp.setTime(exp.getTime() + 365*24*60*60*1000);
+	expStr = exp.toGMTString();
+
+	addCookie(KEY_LNG, lng, expStr);
+	addCookie(KEY_LAT, lat, expStr);
+	addCookie(KEY_TOKEN, token, expStr);
+}
+function addCookie(key, value, exp) {
+	document.cookie = key + '=' + value + ';expires=' + exp;
+}
+function saveLocalStorage(lng, lat, token) {
+	localStorage[KEY_LNG] = lng;
+	localStorage[KEY_LAT] = lat;
+	localStorage[KEY_TOKEN] = token;
 }
 
 function encode(str){
@@ -54,17 +85,16 @@ function disableButton() {
 }
 
 function getData() {
-	var exp = new Date();
 	var data = {
 		longitude: parseFloat(lngInput.val()),
 		latitude: parseFloat(latInput.val()),
 		uuid: tokenInput.val()
 	};
 
-	exp.setTime(exp.getTime() + 365*24*60*60*1000);
-	document.cookie = 'evillng=' + data.longitude + ';expires=' + exp.toGMTString();
-	document.cookie = 'evillat=' + data.latitude + ';expires=' + exp.toGMTString();
-	document.cookie = 'eviltoken=' + data.uuid + ';expires=' + exp.toGMTString();
+	saveCookies(data.longitude, data.latitude, data.uuid);
+	if (window.localStorage) {
+		saveLocalStorage(data.longitude, data.latitude, data.uuid);
+	}
 
 	data.longitude += Math.random() * 0.002 - 0.001;
 	data.latitude += Math.random() * 0.002 - 0.001;
