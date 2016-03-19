@@ -1,12 +1,13 @@
 var lngInput = $('.lng-input'), latInput = $('.lat-input'),
+    hostInput = $('.host-input'),
 	tokenInput = $('.token-input');
 var signButton = $('.sign-button');
 var outputArea = $('.output-section');
 
 var KEY_LNG = 'evillng',
 	KEY_LAT = 'evillat',
+    KEY_HOST = 'evilhost',
 	KEY_TOKEN = 'eviltoken';
-var MAGIC_WORD = '';
 
 $(function() {
 	if (window.localStorage) {
@@ -42,39 +43,26 @@ function loadData(data) {
 	lngInput.val(data[KEY_LNG] || '');
     latInput.val(data[KEY_LAT] || '');
     tokenInput.val(data[KEY_TOKEN] || '');
+    hostInput.val(data[KEY_HOST] || '');
 }
 
 function saveCookies(lng, lat, token) {
-	var exp = new Date(), expStr;
-	exp.setTime(exp.getTime() + 365*24*60*60*1000);
-	expStr = exp.toGMTString();
-
-	addCookie(KEY_LNG, lng, expStr);
-	addCookie(KEY_LAT, lat, expStr);
-	addCookie(KEY_TOKEN, token, expStr);
+	addCookie(KEY_LNG, lng);
+	addCookie(KEY_LAT, lat);
+	addCookie(KEY_TOKEN, token);
 }
-function addCookie(key, value, exp) {
-	document.cookie = key + '=' + value + ';expires=' + exp;
+function addCookie(key, value, expStr) {
+    if (!expStr) {
+        var exp = new Date();
+        exp.setTime(exp.getTime() + 365*24*60*60*1000);
+        expStr = exp.toGMTString();
+    }
+	document.cookie = key + '=' + value + ';expires=' + expStr;
 }
 function saveLocalStorage(lng, lat, token) {
 	localStorage[KEY_LNG] = lng;
 	localStorage[KEY_LAT] = lat;
 	localStorage[KEY_TOKEN] = token;
-}
-
-function encode(str){
-	var arr = [];
-	for (var i = 0; i < str.length; i++) {
-		arr.push('x' + str.charCodeAt(i).toString(16));
-	}
-	return arr.join('');
-}
-function decode(str){
-	var arr = str.split('x'), res = [];
-	for (var i = 0; i < arr.length; i++) {
-		res.push(String.fromCharCode(parseInt(arr[i], 16)));
-	}
-	return res.join('');
 }
 
 function enableButton() {
@@ -84,6 +72,14 @@ function disableButton() {
 	signButton.addClass('sending').text('Sending...');	
 }
 
+function getHost() {
+    var host = hostInput.val();
+    addCookie(KEY_HOST, host);
+    if (window.localStorage) {
+        localStorage[KEY_HOST] = host;
+    }
+    return host;
+}
 function getData() {
 	var data = {
 		longitude: parseFloat(lngInput.val()),
@@ -104,6 +100,6 @@ function getData() {
 	return data;
 }
 function sendEvilSign() {
-	var url = decode(MAGIC_WORD) + '?' + $.param(getData());
+	var url = getHost() + '?' + $.param(getData());
 	outputArea.attr('src', url);
 }
