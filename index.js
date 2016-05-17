@@ -80,11 +80,19 @@ function getHost() {
     }
     return host;
 }
+function getToken() {
+    var val = tokenInput.val();
+    var matches = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.exec(val);
+    if (matches) {
+        val = matches[0];
+    }
+    return val;
+}
 function getData() {
 	var data = {
 		longitude: parseFloat(lngInput.val()),
 		latitude: parseFloat(latInput.val()),
-		uuid: tokenInput.val()
+		uuid: getToken()
 	};
 
 	saveCookies(data.longitude, data.latitude, data.uuid);
